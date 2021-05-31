@@ -46,50 +46,32 @@ CSC（Compressed Sparse Column）与CSR相似，是一种按列压缩的矩阵�
     \label{CSC}
 \end{figure}
 
-\section{现存SpTRSV算法}
+\section{SpTRSV串行算法}
 
 \subsection{基于CSR格式的SpTRSV串行算法}
 
-\begin{algorithm}
-    \caption{CSR Based Serial SpTRSV}\label{csr-serial-sptrsv}
-    MALLOC(*left\_sum, n) \;
-    MEMSET(*left\_sum, 0) \;
-    \For{i = 0; i < n; i++}{
-        \For{j = row\_ptr[i] ; j <row\_ptr[i + 1] - 1 ; j++}{
-            left\_sum[i] $\normalsize \leftarrow$ left\_sum[i] + val[j] x x[col\_idx[j]] \;
-         }
-        x[i] $\normalsize  \leftarrow$ (b[i] - left\_sum[i]) / val[col\_ptr[i]] \;
-    }
-\end{algorithm}
-
-基于CSR格式的SpTRSV串行算法第一个循环从矩阵的第0行开始遍历这个矩阵。在第二个循环进行向量乘法的操作，求出left\_sum[i]。之后再求出未知数x[i]。
-
 \subsection{基于CSC格式的SpTRSV串行算法}
 
-\begin{algorithm}
-    \caption{CSC Based Serial SpTRSV}\label{csc-serial-sptrsv}
-    MALLOC(*left\_sum, n) \;
-    MEMSET(*left\_sum, 0) \;
-    \For{i = 0; i < n; i++}{
-        x[i] $\normalsize \leftarrow$ (b[i] - left\_sum[i]) / val[col\_ptr[i]] \;
-        \For{j = col\_ptr[i] ; j <col\_ptr[i + 1] - 1 ; j++}{
-            left\_sum[rowIdx[j]] $\normalsize \leftarrow$ left\_sum[row\_idx[j]] + val[j] x x[i] \;
-         }
-    }
-\end{algorithm}
-
-该算法的第一个循环从矩阵的第0行开始遍历这个矩阵。首先求出该算该行未知数$x[i]$，接着遍历该列的上的非零元，对该列非零元所对应的$left\_sum$进行更新，$left\_sum[rowIdx[j]] += val[j] x x[i]$。
-
-分析基于CSR压缩格式SpTRSV算法以及基于CSC压缩格式的SpTRSV算法可以得出，两者在访存模式上存在着一定的差异。基于CSR格式的算法需要进行频繁离散读取未知数向量x[col\_idx[j]]，相反基于CSC格式的SpTRSV算法只需要读取当前行号 i 所对应的x[i]。在写数据方面，基于CSR的并行算法需要集中的写left\_sum[i]的数据，而基于CSC的并行算法则是离散的写
-left\_sum[rowIdx[j]]，在多核运算的条件下，离散的写比集中的写同一位置的数据更容易进行并行化。
-
-\subsection{基于level-sets的SpTRSV并行算法}
-
-基于level-sets的SpTRSV并行算法，主要分为两个阶段：预处理阶段和计算阶段。算法在预处理阶段通过并行的BFS算法构建一个任务依赖图，这往往需要大量的计算开销。
+\begin{algorithm}[htb]
+    \caption{ Framework of ensemble learning for our system.}
+    \label{alg:Framwork}
+    \begin{algorithmic}[1]
+      \State Extracting the set of reliable negative and/or positive samples $T_n$ from $U_n$ with help of $P_n$;
+      \label{code:fram:extract}
+      \State Training ensemble of classifiers $E$ on $T_n \cup P_n$, with help of data in former batches;
+      \label{code:fram:trainbase}
+      \State $E_n=E_{n-1}cup E$;
+      \label{code:fram:add}
+      \State Classifying samples in $U_n-T_n$ by $E_n$;
+      \label{code:fram:classify}
+      \State Deleting some weak classifiers in $E_n$ so as to keep the capacity of $E_n$;
+      \label{code:fram:select} \\
+      \Return $E_n$;
+    \end{algorithmic}
+  \end{algorithm}
 
 
-\section{鲲鹏920的内存层次结构}
-
+\section{多核系统下的Cache一致性协议}
 
 \section{ARM NEON指令}
 

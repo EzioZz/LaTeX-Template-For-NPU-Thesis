@@ -1,47 +1,80 @@
-\chapter{萌新教程}
-\section{这是中标题}
-emmmm
-\subsection{这是小标题}
-emmmmm
-\subsubsection{这是小小标题}
-搞这么多层大丈夫?
+\chapter{绪论}
+\section{课题背景}
 
-\section{表格}
+稀疏下三角矩阵求解(Sparse Triangular Solve, SpTRSV)并行算法是很多数值计算方法的重要组成部分，比如用直接法求解稀疏矩阵的线性方程组\cite{davis2006direct}，以及最小二乘法的求解\cite{saad2003iterative}，是现代科学计算中一个广泛使用的计算核心，在数值模拟计算中，通常会使用迭代法或直接法求解大规模稀疏线性方程组，而SpTRSV的效率直接影响了线性方程组的求解效率，故提高SpTRSV算法的性能至关重要。
 
-使用 \href{http://www.tablesgenerator.com/}{http://www.tablesgenerator.com/} 生成, 可粘贴Excel.
+相比于稠密下三角举证解法器\cite{hogg2013fast}或者其他稀疏矩阵计算方法，例如稀疏矩阵转置\cite{wang2016parallel}，稀疏矩阵向量乘法\cite{liu2015csr5}\cite{liu2015speculative}，和稀疏矩阵乘法\cite{liu2015framework}，SpTRSV频繁且离散地数据访存、任务之间存在着很强的依赖、需要细粒度的同步、任务之间负载不均衡等特点是并行优化更加难以进行。
 
-\begin{table}[!h]
+SpTRSV算法主要是从方程组$Lx=b$中求解未知数向量$ x $，其中$ L $是下三角矩阵，且对角线上的元素都不为0。因为这意味这要计算其中的一个未知数$x_k$，需要先计算出其前置未知数$x_0$, \dots, $x_{k-1}$ 中的一个子集。这些任务间的依赖关系，就使得SpTRSV的计算转换成了一个任务依赖图的计算（Task Dependent Graph，TDG），而且这个TDG是一张有方无环图（Directed Acyclic Graph）。
+
+华为作为鲲鹏计算产业的成员，聚焦于发展华为鲲鹏+昇腾双引擎芯片族，通过“硬件开放、软件开源、使能合作伙伴”来推动计算产业的发展。华为鲲鹏920处理器兼容了ARMv8架构。最多拥有64核心。其浮点及SIMD运算单元支持每拍2条ARM Neon 128bits浮点运算。华为鲲鹏系统支持NUMA内存架构，实现最多4个鲲鹏920互联和最高256个物理核的NUMA架构。 
+
+稀疏矩阵运算在科学计算、数据分析、机器学习等应用中十分常见，而稀疏矩阵频繁且离散地数据访存、任务之间存在着很强的依赖、需要细粒度的同步、任务之间负载不均衡等特点又给代码优化带来了巨大的挑战。
+
+
+\section{研究现状}
+
+\begin{figure}[htbp]
     \centering
-    \caption{My caption}
-    \label{my-label}
-    \begin{tabular}{@{}llll@{}}
-        \toprule
-        $A$ & $B$ & $A+B$ & $A\times B$ \\ \midrule
-        1   & 6   & 7     & 6           \\
-        2   & 7   & 9     & 14          \\
-        3   & 8   & 11    & 24          \\
-        4   & 9   & 13    & 36          \\
-        5   & 10  & 15    & 50          \\ \bottomrule
-    \end{tabular}
-\end{table}
+    \subfigure[下三角矩阵]{
+    \begin{minipage}[t]{0.25\linewidth}
+    \centering
+    \includegraphics[width=1.5in]{Sparse_Matrix.png}
+    \end{minipage}%
+    }%
+    \subfigure[任务依赖图]{
+    \begin{minipage}[t]{0.25\linewidth}
+    \centering
+    \includegraphics[width=1.5in]{DAG.png}
+    \label{TDG}
+    \end{minipage}%
+    }%
+    \subfigure[level-sets]{
+    \begin{minipage}[t]{0.25\linewidth}
+    \centering
+    \includegraphics[width=1.5in]{level-sets.png}
+    \end{minipage}
+    \label{level-sets}
+    }%
+    \centering
+\end{figure}
 
-\section{特殊符号}
+有研究者Saad\cite{anderson1989solving}，以及Saltz\cite{saltz1990aggregation}根据SpTRSV算法是一张任务依赖图\ref{TDG}的特点，提出了基于level-sets的方法，在预处理阶段构建一个任务依赖图，如图\ref{level-sets}，之后就可以在level内部进行并行，在level之间设置同步屏障，一个level执行完了再执行下一个level。
 
-用 \href{http://detexify.kirelabs.org/classify.html}{http://detexify.kirelabs.org/classify.html}
-画出来.
+随后有研究人员在体系结构层面上针对CPU\cite{kabir2015sts}\cite{park2014sparsifying}\cite{Schreiber1982}\cite{wolf2010factors}以及GPU\cite{li2013gpu}\cite{naumov2011parallel}\cite{suchoski2012adapting}进行了优化。
 
-\section{参考文献的引用}
+基于level-sets的算法，存在着两个缺陷：第一，虽然可以在每个level上进行并行取得良好的并行度，但是需要在预处理阶段构建一个TAG图，计算每个任务的level，以及处理任务之间任务负载均衡的问题。然而，在预处理阶段往往会花费大量的时候，写出一个有良好扩展性的并行预处理算法同样具有挑战性，往往可能会导致预处理的时间远远大于并行计算任务图的时间，甚至在计算任务图上获得的加速甚至不能抵消预处理阶段产生的计算时间。第二，基于level-sets的的算法需要在每个level之间都要使用一个屏障确保进行同步，等待该level内的任务都执行完了再继续下个一个任务，在负载不均衡的情况下，这会产生大量的等待时间，随着核心数量的上升该同步方式的开销也会随之上升。
 
-\LaTeX{} 中要求参考文献使用 \lstinline`\cite` 进行参考引用, 但是由于论文要求中说明需在
-文字的右上角注明引用, 所以请使用预定义好的命令 \lstinline`\ucite` 进行参考引用. 比如本论
-文模板 `LaTeX-Template-For-NPU-Thesis' \ucite{NWPUThesisLaTeXTemplate} 要求务必
-声明引用, 同时预配置了插件 `math-symbols' \ucite{MathSymbolsinLaTeXbypolossk}. 对
-组件的引用是每一名科学工作者的基本素养（一本正经）. 对于需要引用但是并不需要明确指明引用位置
-的文献, 请使用 \lstinline`\nocite` 命令.
+面对以上两个level-sets的缺陷，有研究人员提出了以下的优化算法。
 
-在此同时感谢真正的 dalao 高德纳开发了全世界版本号最接近 $\pi$ 的软件 \LaTeX{}
-\ucite{knuth1986the}\nocite{lamport1989latex:}.
+Jongsoo Park\cite{park2014sparsifying}在基于level-sets算法进行了一些优化。他发现传统的基于level-sets的算法所使用的屏障式的同步方式会产生大量的开销。因此作者提出了一种peer-to-peer的同步方式。线程在任务执行完了之后不再是等待在屏障处，等待其他线程执行到该屏障处，而是会判断下一个任务的前置需求是否被完成，如果已经完成了，那么就继续运行下去。相比于基于屏障的同步方式，peer-to-peer的同步方式具有更好的扩展性。
 
-测试额外的引用文献 \ucite{szegedy2015going}
+在减少同步所需消耗方面，作者还发现，在SpTRSV算法的任务依赖图中，大部分的依赖都是多余的，作者期望通过一步预处理操作来删除这些多余依赖。例如在 2→3→5 和 2→5 这种边存在的情况下，删除了 2→5 这条边。另一方面，作者发现在这些多余依赖当中，大部分都是两跳的（比如上述的 2→5 这条边），少部分是三跳或者三跳以上。为了减少预处理的计算量，作者选择用粗略但快速的算法，只删除两跳的依赖边，而不是删除所有的多余依赖。减少了大约90\%的多余依赖，具体效果如\ref{sparsifying_edge}。该算法运行在12核的Xeon处理器上，相比于传统的基于level-sets以及屏障式同步的算法获得了至少1.6倍的加速比。
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{sparsifying_edge.png}
+    \caption{每个super-task的出度有了显著的减少}
+    \label{sparsifying_edge}
+\end{figure}
+
+同时作者也做了负载均衡的优化，根据每行非零元个数的多少来进行任务的合并，组合成一定数量的super-task，使得每个super-task有相似的计算量。
+
+刘伟峰\cite{liuSyncFree2016,liuFastSynchronizationfreeAlgorithms2017}从减少算法预处理和减少算法同步所需时间的角度出发，提出了无需同步的（synchronization-free）SpTRSV算法。 基于传统level-set的方法，随着矩阵大小的增加，其在预处理阶段所需的消耗会剧烈增加，且同步所需的时间在计算总时间中的占比也会大量增加。他的算法在 预处理阶段只计算了每个 entry 的 in-degree 数组（用来记录每一个节点需要有多少入度），而不是构造一个依赖图，大幅减少了预处理时间，而且该预处理方法能够轻易地使用多核来进行并行加速。对于每个 warp 使用自旋锁，不断判断前置依赖 是否都被满足来决定该结点是否开始计算。当一行计算完成后，使用原子操作来“通知”后继 节点，减少了同步的时间，该算法在 GPU TitanX 上比 Nvidia 提供的算法快 2-3 倍。
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{sync-free.png}
+    \caption{synchronization-free SpTRSV算法的示意图}
+    \label{sync-free}
+\end{figure}
+
+倪鸿、刘鑫\cite{nihong2019}根据国产异构众核处理器 SW26010 体系结构的特点，针对非结构网络计算， 提出了一种基于流水线串行-局部并行思想的通用众核 SpTRSV 优化方法。首先，为了减少预处理时间，根据核心的个数，将向量 x 平均划分为多个向量块。每个向量块 x 交给一个从核进行 处理。每个从核的操作流程为：（1）等待接受来自依赖向量块的数据，直到满足进入（2）。（2）进行 x 的计算。（3）发送计算得到的 x 给需要的核心。其次，为了解决 SW26010 寄存器通讯的局限性，作者还搭建了众核通信架构。同时还有数据压缩、LDM 缓冲、访存掩盖以及数据压缩等优化。
+
+\section{研究内容}
+
+
+\section{本文构成}
+
 
 \endinput

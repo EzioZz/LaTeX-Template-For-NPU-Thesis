@@ -1,36 +1,487 @@
+/////////////////////////////////////////////////////////////////////////////////////
+// 来自sync-free部分的引用
+@inproceedings{ros2015callback,
+  title        = {Callback: Efficient synchronization without invalidation with a directory just for spin-waiting},
+  author       = {Ros, Alberto and Kaxiras, Stefanos},
+  booktitle    = {2015 ACM/IEEE 42nd Annual International Symposium on Computer Architecture (ISCA)},
+  pages        = {427--438},
+  year         = {2015},
+  organization = {IEEE}
+}
+
+@book{saad2003iterative,
+  title     = {Iterative methods for sparse linear systems},
+  author    = {Saad, Yousef},
+  year      = {2003},
+  publisher = {SIAM}
+}
+
+@article{saltz1990aggregation,
+  title     = {Aggregation methods for solving sparse triangular systems on multiprocessors},
+  author    = {Saltz, Joel H},
+  journal   = {SIAM journal on scientific and statistical computing},
+  volume    = {11},
+  number    = {1},
+  pages     = {123--144},
+  year      = {1990},
+  publisher = {SIAM}
+}
+
+@inproceedings{liu2016synchronization,
+  title        = {A synchronization-free algorithm for parallel sparse triangular solves},
+  author       = {Liu, Weifeng and Li, Ang and Hogg, Jonathan and Duff, Iain S and Vinter, Brian},
+  booktitle    = {European Conference on Parallel Processing},
+  pages        = {617--630},
+  year         = {2016},
+  organization = {Springer}
+}
+
+@inproceedings{scogland2015design,
+  title     = {Design and evaluation of scalable concurrent queues for many-core architectures},
+  author    = {Scogland, Thomas RW and Feng, Wu-chun},
+  booktitle = {Proceedings of the 6th ACM/SPEC International Conference on Performance Engineering},
+  pages     = {63--74},
+  year      = {2015}
+}
+
+@inproceedings{suchoski2012adapting,
+  title        = {Adapting sparse triangular solution to GPUs},
+  author       = {Suchoski, Brad and Severn, Caleb and Shantharam, Manu and Raghavan, Padma},
+  booktitle    = {2012 41st International Conference on Parallel Processing Workshops},
+  pages        = {140--148},
+  year         = {2012},
+  organization = {IEEE}
+}
+
+@inproceedings{wolf2010factors,
+  title        = {Factors impacting performance of multithreaded sparse triangular solve},
+  author       = {Wolf, Michael M and Heroux, Michael A and Boman, Erik G},
+  booktitle    = {International Conference on High Performance Computing for Computational Science},
+  pages        = {32--44},
+  year         = {2010},
+  organization = {Springer}
+}
+
+@inproceedings{wang2016parallel,
+  title     = {Parallel transposition of sparse data structures},
+  author    = {Wang, Hao and Liu, Weifeng and Hou, Kaixi and Feng, Wu-chun},
+  booktitle = {Proceedings of the 2016 International Conference on Supercomputing},
+  pages     = {1--13},
+  year      = {2016}
+}
+
+@inproceedings{xiao2010inter,
+  title        = {Inter-block GPU communication via fast barrier synchronization},
+  author       = {Xiao, Shucai and Feng, Wu-chun},
+  booktitle    = {2010 IEEE International Symposium on Parallel \& Distributed Processing (IPDPS)},
+  pages        = {1--12},
+  year         = {2010},
+  organization = {IEEE}
+}
+
+@inproceedings{yan2013streamscan,
+  title     = {StreamScan: Fast scan algorithms for GPUs without global barrier synchronization},
+  author    = {Yan, Shengen and Long, Guoping and Zhang, Yunquan},
+  booktitle = {Proceedings of the 18th ACM SIGPLAN symposium on Principles and practice of parallel programming},
+  pages     = {229--238},
+  year      = {2013}
+}
+@inproceedings{li2015fine,
+  title     = {Fine-grained synchronizations and dataflow programming on GPUs},
+  author    = {Li, Ang and van den Braak, Gert-Jan and Corporaal, Henk and Kumar, Akash},
+  booktitle = {Proceedings of the 29th ACM on International Conference on Supercomputing},
+  pages     = {109--118},
+  year      = {2015}
+}
+
+@article{li2013gpu,
+  title     = {GPU-accelerated preconditioned iterative linear solvers},
+  author    = {Li, Ruipeng and Saad, Yousef},
+  journal   = {The Journal of Supercomputing},
+  volume    = {63},
+  number    = {2},
+  pages     = {443--466},
+  year      = {2013},
+  publisher = {Springer}
+}
+
+@article{liang2015misar,
+  title     = {MiSAR: Minimalistic synchronization accelerator with resource overflow management},
+  author    = {Liang, Ching-Kai and Prvulovic, Milos},
+  journal   = {ACM SIGARCH Computer Architecture News},
+  volume    = {43},
+  number    = {3S},
+  pages     = {414--426},
+  year      = {2015},
+  publisher = {ACM New York, NY, USA}
+}
+
+@phdthesis{liu2015parallel,
+  title  = {Parallel and scalable sparse basic linear algebra subprograms},
+  author = {Liu, Weifeng},
+  year   = {2015},
+  school = {University of Copenhagen, Faculty of Science [Niels Bohr Institute]}
+}
+
+@article{liu2015framework,
+  title     = {A framework for general sparse matrix--matrix multiplication on GPUs and heterogeneous processors},
+  author    = {Liu, Weifeng and Vinter, Brian},
+  journal   = {Journal of Parallel and Distributed Computing},
+  volume    = {85},
+  pages     = {47--61},
+  year      = {2015},
+  publisher = {Elsevier}
+}
+
+@inproceedings{liu2015csr5,
+  title     = {CSR5: An efficient storage format for cross-platform sparse matrix-vector multiplication},
+  author    = {Liu, Weifeng and Vinter, Brian},
+  booktitle = {Proceedings of the 29th ACM on International Conference on Supercomputing},
+  pages     = {339--350},
+  year      = {2015}
+}
+
+@article{liu2015speculative,
+  title     = {Speculative segmented sum for sparse matrix-vector multiplication on heterogeneous processors},
+  author    = {Liu, Weifeng and Vinter, Brian},
+  journal   = {Parallel Computing},
+  volume    = {49},
+  pages     = {179--193},
+  year      = {2015},
+  publisher = {Elsevier}
+}
+
+@article{Schreiber1982,
+  author  = {Schreiber, R., Tang},
+  title   = {Vectorizing the Conjugate Gradient Method.},
+  journal = {Proceedings of the Symposium on CYBER 205 Applications},
+  volume  = {},
+  number  = {},
+  year    = {1982}
+}
+
+@article{mayer2009parallel,
+  title     = {Parallel algorithms for solving linear systems with sparse triangular matrices},
+  author    = {Mayer, Jan},
+  journal   = {Computing},
+  volume    = {86},
+  number    = {4},
+  pages     = {291},
+  year      = {2009},
+  publisher = {Springer}
+}
+
+@article{naumov2011parallel,
+  title   = {Parallel solution of sparse triangular linear systems in the preconditioned iterative methods on the GPU},
+  author  = {Naumov, Maxim},
+  journal = {NVIDIA Corp., Westford, MA, USA, Tech. Rep. NVR-2011},
+  volume  = {1},
+  year    = {2011}
+}
+
+@inproceedings{park2014sparsifying,
+  title        = {Sparsifying synchronization for high-performance shared-memory sparse triangular solver},
+  author       = {Park, Jongsoo and Smelyanskiy, Mikhail and Sundaram, Narayanan and Dubey, Pradeep},
+  booktitle    = {International Supercomputing Conference},
+  pages        = {124--140},
+  year         = {2014},
+  organization = {Springer}
+}
+
+@article{anderson1989solving,
+  title     = {Solving sparse triangular linear systems on parallel computers},
+  author    = {Anderson, Edward and Saad, Youcef},
+  journal   = {International Journal of High Speed Computing},
+  volume    = {1},
+  number    = {01},
+  pages     = {73--95},
+  year      = {1989},
+  publisher = {World Scientific}
+}
+
+@inproceedings{anzt2015iterative,
+  title        = {Iterative sparse triangular solves for preconditioning},
+  author       = {Anzt, Hartwig and Chow, Edmond and Dongarra, Jack},
+  booktitle    = {European conference on parallel processing},
+  pages        = {650--661},
+  year         = {2015},
+  organization = {Springer}
+}
+
+@book{bjorck1996numerical,
+  title     = {Numerical methods for least squares problems},
+  author    = {Bj{\"o}rck, {\AA}ke},
+  year      = {1996},
+  publisher = {SIAM}
+}
+
+@article{chow2015fine,
+  title     = {Fine-grained parallel incomplete LU factorization},
+  author    = {Chow, Edmond and Patel, Aftab},
+  journal   = {SIAM journal on Scientific Computing},
+  volume    = {37},
+  number    = {2},
+  pages     = {C169--C193},
+  year      = {2015},
+  publisher = {SIAM}
+}
+
+@book{davis2006direct,
+  title     = {Direct methods for sparse linear systems},
+  author    = {Davis, Timothy A},
+  year      = {2006},
+  publisher = {SIAM}
+}
+
+@article{davis2011university,
+  title     = {The University of Florida sparse matrix collection},
+  author    = {Davis, Timothy A and Hu, Yifan},
+  journal   = {ACM Transactions on Mathematical Software (TOMS)},
+  volume    = {38},
+  number    = {1},
+  pages     = {1--25},
+  year      = {2011},
+  publisher = {ACM New York, NY, USA}
+}
+
+@book{duff2017direct,
+  title     = {Direct methods for sparse matrices},
+  author    = {Duff, Iain S and Erisman, Albert Maurice and Reid, John Ker},
+  year      = {2017},
+  publisher = {Oxford University Press}
+}
+
+@article{duff2002overview,
+  title     = {An overview of the sparse basic linear algebra subprograms: The new standard from the BLAS technical forum},
+  author    = {Duff, Iain S and Heroux, Michael A and Pozo, Roldan},
+  journal   = {ACM Transactions on Mathematical Software (TOMS)},
+  volume    = {28},
+  number    = {2},
+  pages     = {239--267},
+  year      = {2002},
+  publisher = {ACM New York, NY, USA}
+}
+
+@article{hogg2013fast,
+  title     = {A fast dense triangular solve in CUDA},
+  author    = {Hogg, Jonathan D},
+  journal   = {SIAM Journal on Scientific Computing},
+  volume    = {35},
+  number    = {3},
+  pages     = {C303--C322},
+  year      = {2013},
+  publisher = {SIAM}
+}
+
+@inproceedings{kabir2015sts,
+  title     = {STS-k: a multilevel sparse triangular solution scheme for NUMA multicores},
+  author    = {Kabir, Humayun and Booth, Joshua Dennis and Aupy, Guillaume and Benoit, Anne and Robert, Yves and Raghavan, Padma},
+  booktitle = {Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis},
+  pages     = {1--11},
+  year      = {2015}
+}
+
+
+
+// 来自sync-free部分的引用
+/////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////////////
+// 我自己文章的引用
+
+@journal{nihong2019,
+  title     = {非结构网格下稀疏下三角方程求解器众核优化技术研究},
+  author    = {倪鸿, 刘鑫},
+  year      = {2019},
+  publisher = {北京大学}
+}
+
+@inproceedings{kabirSTSkMultilevelSparse2015,
+  title      = {{{STS}}-k: A Multilevel Sparse Triangular Solution Scheme for {{NUMA}} Multicores},
+  shorttitle = {{{STS}}-k},
+  booktitle  = {Proceedings of the {{International Conference}} for {{High Performance Computing}}, {{Networking}}, {{Storage}} and {{Analysis}}},
+  author     = {Kabir, Humayun and Booth, Joshua Dennis and Aupy, Guillaume and Benoit, Anne and Robert, Yves and Raghavan, Padma},
+  year       = {2015},
+  month      = nov,
+  pages      = {1--11},
+  publisher  = {{ACM}},
+  address    = {{Austin Texas}},
+  doi        = {10.1145/2807591.2807667},
+  abstract   = {We consider techniques to improve the performance of parallel sparse triangular solution on non-uniform memory architecture multicores by extending earlier coloring and level set schemes for single-core multiprocessors. We develop STS-k, where k represents a small number of transformations for latency reduction from increased spatial and temporal locality of data accesses. We propose a graph model of data reuse to inform the development of STS-k and to prove that computing an optimal cost schedule is NP-complete. We observe significant speed-ups with STS-3 on 32-core Intel WestmereEx and 24-core AMD `MagnyCours' processors. Incremental gains solely from the 3-level transformations in STS-3 for a fixed ordering, correspond to reductions in execution times by factors of 1.4(Intel) and 1.5(AMD) for level sets and 2(Intel) and 2.2(AMD) for coloring. On average, execution times are reduced by a factor of 6(Intel) and 4(AMD) for STS-3 with coloring compared to a reference implementation using level sets.},
+  file       = {/Users/yanyucheng/Zotero/storage/GMLLUFXX/Kabir et al. - 2015 - STS-k a multilevel sparse triangular solution sch.pdf},
+  isbn       = {978-1-4503-3723-6},
+  language   = {en}
+}
+
+@article{liuFastSynchronizationfreeAlgorithms2017,
+  title      = {Fast Synchronization-Free Algorithms for Parallel Sparse Triangular Solves with Multiple Right-Hand Sides: {{Fast}} Synchronization-Free Algorithms for Parallel Sparse Triangular Solves},
+  shorttitle = {Fast Synchronization-Free Algorithms for Parallel Sparse Triangular Solves with Multiple Right-Hand Sides},
+  author     = {Liu, Weifeng and Li, Ang and Hogg, Jonathan D. and Duff, Iain S. and Vinter, Brian},
+  year       = {2017},
+  month      = nov,
+  volume     = {29},
+  pages      = {e4244},
+  issn       = {15320626},
+  doi        = {10.1002/cpe.4244},
+  abstract   = {The sparse triangular solve kernels, SpTRSV and SpTRSM, are important building blocks for a number of numerical linear algebra routines. Parallelizing SpTRSV and SpTRSM on today's manycore platforms, such as GPUs, is not an easy task since computing a component of the solution may depend on previously computed components, enforcing a degree of sequential processing. As a consequence, most existing work introduces a preprocessing stage to partition the components into a group of level-sets or coloursets so that components within a set are independent and can be processed simultaneously during the subsequent solution stage. However, this class of methods requires a long preprocessing time as well as significant runtime synchronization overheads between the sets. To address this, we propose in this paper novel approaches for SpTRSV and SpTRSM in which the ordering between components is naturally enforced within the solution stage. In this way, the cost for preprocessing can be greatly reduced, and the synchronizations between sets are completely eliminated. To further exploit the data-parallelism, we also develop an adaptive scheme for efficiently processing multiple right-hand sides in SpTRSM. A comparison with a state-of-the-art library supplied by the GPU vendor, using 20 sparse matrices on the latest GPU device, shows that the proposed approach obtains an average speedup of over two for SpTRSV and up to an order of magnitude speedup for SpTRSM. In addition, our method is up to two orders of magnitude faster for the preprocessing stage than existing SpTRSV and SpTRSM methods.},
+  file       = {/Users/yanyucheng/Zotero/storage/4SSKIB99/Liu et al. - 2017 - Fast synchronization-free algorithms for parallel .pdf},
+  journal    = {Concurrency and Computation: Practice and Experience},
+  language   = {en},
+  number     = {21}
+}
+
+@incollection{liuSyncFree2016,
+  title     = {A Synchronization Free Algorithm for Parallel Sparse Triangular Solves},
+  booktitle = {Euro Par2016: Parallel Processing},
+  author    = {Liu, Weifeng and Li, Ang and Hogg, Jonathan and Duff, Iain S. and Vinter, Brian},
+  year      = {2016},
+  volume    = {9833},
+  pages     = {617--630},
+  publisher = {{Springer International Publishing}},
+  address   = {{Cham}}
+}
+
+@inproceedings{luEfficientBlockAlgorithms2020,
+  title     = {Efficient {{Block Algorithms}} for {{Parallel Sparse Triangular Solve}}},
+  booktitle = {49th {{International Conference}} on {{Parallel Processing}} - {{ICPP}}},
+  author    = {Lu, Zhengyang and Niu, Yuyao and Liu, Weifeng},
+  year      = {2020},
+  month     = aug,
+  pages     = {1--11},
+  publisher = {{ACM}}
+}
+
+@article{luEfficientBlockAlgorithms2020a,
+  title    = {Efficient {{Block Algorithms}} for {{Parallel Sparse Triangular Solve}}},
+  author   = {Lu, Zhengyang and Niu, Yuyao and Liu, Weifeng},
+  year     = {2020},
+  pages    = {11},
+  abstract = {The sparse triangular solve (SpTRSV) kernel is an important building block for a number of linear algebra routines such as sparse direct and iterative solvers. The major challenge of accelerating SpTRSV lies in the difficulties of finding higher parallelism. Existing work mainly focuses on reducing dependencies and synchronizations in the level-set methods. However, the 2D block layout of the input matrix has been largely ignored in designing more efficient SpTRSV algorithms.},
+  file     = {/Users/yanyucheng/Zotero/storage/K4AMXEEL/Efficient Block Algorithms for Parallel Sparse Triangular Solve.pdf},
+  language = {en}
+}
+
+@incollection{parkSparsifyingSynchronizationHighPerformance2014,
+  title     = {Sparsifying {{Synchronization}} for {{High}}-{{Performance Shared}}-{{Memory Sparse Triangular Solver}}},
+  booktitle = {Supercomputing},
+  author    = {Park, Jongsoo and Smelyanskiy, Mikhail and Sundaram, Narayanan and Dubey, Pradeep},
+  editor    = {Hutchison, David and Kanade, Takeo and Kittler, Josef and Kleinberg, Jon M. and Kobsa, Alfred and Mattern, Friedemann and Mitchell, John C. and Naor, Moni and Nierstrasz, Oscar and Pandu Rangan, C. and Steffen, Bernhard and Terzopoulos, Demetri and Tygar, Doug and Weikum, Gerhard and Kunkel, Julian Martin and Ludwig, Thomas and Meuer, Hans Werner},
+  year      = {2014},
+  volume    = {8488},
+  pages     = {124--140},
+  publisher = {{Springer International Publishing}},
+  address   = {{Cham}},
+  doi       = {10.1007/978-3-319-07518-1_8},
+  abstract  = {The last decade has seen rapid growth of single-chip multiprocessors (CMPs), which have been leveraging Moore's law to deliver high concurrency via increases in the number of cores and vector width. Modern CMPs execute from several hundreds to several thousands concurrent operations per second, while their memory subsystem delivers from tens to hundreds Giga-bytes per second bandwidth.},
+  file      = {/Users/yanyucheng/Zotero/storage/L7HWLUD4/Park et al. - 2014 - Sparsifying Synchronization for High-Performance S.pdf},
+  isbn      = {978-3-319-07517-4 978-3-319-07518-1},
+  language  = {en}
+}
+
+@inproceedings{suCapelliniSpTRSVThreadLevelSynchronizationFree2020,
+  title      = {{{CapelliniSpTRSV}}: {{A Thread}}-{{Level Synchronization}}-{{Free Sparse Triangular Solve}} on {{GPUs}}},
+  shorttitle = {{{CapelliniSpTRSV}}},
+  booktitle  = {49th {{International Conference}} on {{Parallel Processing}} - {{ICPP}}},
+  author     = {Su, Jiya and Zhang, Feng and Liu, Weifeng and He, Bingsheng and Wu, Ruofan and Du, Xiaoyong and Wang, Rujia},
+  year       = {2020},
+  month      = aug,
+  pages      = {1--11},
+  publisher  = {{ACM}},
+  address    = {{Edmonton AB Canada}},
+  doi        = {10.1145/3404397.3404400},
+  abstract   = {Sparse triangular solves (SpTRSVs) have been extensively used in linear algebra fields, and many GPU-based SpTRSV algorithms have been proposed. Synchronization-free SpTRSVs, due to their short preprocessing time and high performance, are currently the most popular SpTRSV algorithms. However, we observe that the performance of those SpTRSV algorithms on different matrices can vary greatly by 845 times. Our further studies show that when the average number of components per level is high and the average number of nonzero elements per row is low, those SpTRSVs exhibit extremely low performance. The reason is that, they use a warp on the GPU to process a row in sparse matrices, and such warp-level designs have severe underutilization of the GPU. To solve this problem, we propose CapelliniSpTRSV, a thread-level synchronization-free SpTRSV algorithm. Particularly, CapelliniSpTRSV has three novel features. First, unlike the previous studies, CapelliniSpTRSV does not need preprocessing to calculate levels. Second, CapelliniSpTRSV exhibits high performance on matrices that previous SpTRSVs cannot handle efficiently. Third, CapelliniSpTRSV's optimization does not rely on specific sparse matrix storage format. Instead, it can achieve very good performance on the most popular sparse matrix storage, compressed sparse row (CSR) format, and thus users do not need to conduct format conversion. We evaluate CapelliniSpTRSV with 245 matrices from the Florida Sparse Matrix Collection on three GPU platforms, and experiments show that our SpTRSV exhibits 6.84 GFLOPS/s, which is 4.97x speedup over the state-of-the-art synchronization-free SpTRSV algorithm, and 4.74x speedup over the SpTRSV in cuSPARSE. CapelliniSpTRSV is open-sourced in https://github.com/JiyaSu/CapelliniSpTRSV.},
+  file       = {/Users/yanyucheng/Zotero/storage/U5Q4LTHS/Su et al. - 2020 - CapelliniSpTRSV A Thread-Level Synchronization-Fr.pdf},
+  isbn       = {978-1-4503-8816-0},
+  language   = {en}
+}
+
+@inproceedings{suchoskiAdaptingSparseTriangular2012,
+  title     = {Adapting {{Sparse Triangular Solution}} to {{GPUs}}},
+  booktitle = {2012 41st {{International Conference}} on {{Parallel Processing Workshops}}},
+  author    = {Suchoski, Brad and Severn, Caleb and Shantharam, Manu and Raghavan, Padma},
+  year      = {2012},
+  month     = sep,
+  pages     = {140--148},
+  publisher = {{IEEE}},
+  address   = {{Pittsburgh, PA, USA}},
+  doi       = {10.1109/ICPPW.2012.23},
+  abstract  = {High performance computing systems are increasingly incorporating hybrid CPU/GPU nodes to accelerate the rate at which floating point calculations can be performed for scientific applications. Currently, a key challenge is adapting scientific applications to such systems when the underlying computations are sparse, such as sparse linear solvers for the simulation of partial differential equation models using semiimplicit methods. Now, a key bottleneck is sparse triangular solution for solvers such as preconditioned conjugate gradients (PCG). We show that sparse triangular solution can be effectively mapped to GPUs by extracting very large degrees of finegrained parallelism using graph coloring. We develop simple performance models to predict these effects at intersection of the data and hardware attributes and we evaluate our scheme on a Nvidia Tesla M2090 GPU relative to the level set scheme developed at NVIDIA. Our results indicate that our approach significantly enhances the available fine-grained parallelism to speed-up PCG iteration time compared to the NVIDIA scheme, by a factor with a geometric mean of 5.41 on a single GPU, with speedups as high as 63 in some cases.},
+  file      = {/Users/yanyucheng/Zotero/storage/QTCX6HZT/Suchoski et al. - 2012 - Adapting Sparse Triangular Solution to GPUs.pdf},
+  isbn      = {978-1-4673-2509-7 978-0-7695-4795-4},
+  language  = {en}
+}
+
+@inproceedings{wangFastSparseTriangular2018,
+  title     = {A {{Fast Sparse Triangular Solver}} for {{Structured}}-Grid {{Problems}} on {{Sunway Many}}-Core {{Processor SW26010}}},
+  booktitle = {Proceedings of the 47th {{International Conference}} on {{Parallel Processing}}},
+  author    = {Wang, Xinliang and Xu, Ping and Xue, Wei and Ao, Yulong and Yang, Chao and Fu, Haohuan and Gan, Lin and Yang, Guangwen and Zheng, Weimin},
+  year      = {2018},
+  month     = aug,
+  pages     = {1--11},
+  publisher = {{ACM}},
+  address   = {{Eugene OR USA}},
+  doi       = {10.1145/3225058.3225071},
+  abstract  = {The sparse triangular solver (SpTRSV) is one of the most essential kernels in many scientific and engineering applications. Efficiently parallelizing the SpTRSV on modern many-core architectures is considerably difficult due to inherent dependency of computation and discontinuous memory accesses. Achieving high performance of SpTRSV is even more challenging for SW26010, the new-generation customized heterogeneous many-core processor equipped in the top-rank Sunway TaihuLight supercomputer. Owing to regular sparse pattern, structured-grid triangular problems show much different computing characteristics with general ones as well as new opportunities to algorithm design on many-core architectures, which ever lacks attention. In this work, we focus on how to design and implement fast SpTRSV for structured-grid problems on SW26010. A generalized algorithm framework of parallel SpTRSV is proposed for best utilization of the features and flexibilities of SW26010 many-core architecture according to the fine-grained Producer-Consumer model. Moreover, a novel parallel structuredgrid SpTRSV is presented by using direct data transfers across registers of the computing elements of SW26010. Experiments on four typical structured-grid triangular problems with different problem sizes demonstrate that our SpTRSV can achieve an average momory bandwidth utilization of 79.7\% according to the stream benchmark, which leads to a speedup of 17.7 over serial version on SW26010. Furthermore, experiments with real world sparse linear problems show that our proposed SpTRSV can achieve superior preconditioning performance over the Intel Xeon E5-2670 v3 CPU and Intel Xeon Phi 7210 KNL over DDR4 memory.},
+  file      = {/Users/yanyucheng/Zotero/storage/JRN9QXK3/Wang et al. - 2018 - A Fast Sparse Triangular Solver for Structured-gri.pdf},
+  isbn      = {978-1-4503-6510-9},
+  language  = {en}
+}
+
+@article{zhangYuenyeungSpTRSVThreadLevelWarpLevel2021,
+  title      = {{{YuenyeungSpTRSV}}: {{A Thread}}-{{Level}} and {{Warp}}-{{Level Fusion Synchronization}}-{{Free Sparse Triangular Solve}}},
+  shorttitle = {{{YuenyeungSpTRSV}}},
+  author     = {Zhang, Feng and Su, Jiya and Liu, Weifeng and He, Bingsheng and Wu, Ruofan and Du, Xiaoyong and Wang, Rujia},
+  year       = {2021},
+  month      = sep,
+  volume     = {32},
+  pages      = {2321--2337},
+  issn       = {1045-9219, 1558-2183, 2161-9883},
+  doi        = {10.1109/TPDS.2021.3066635},
+  abstract   = {Sparse triangular solves (SpTRSVs) are widely used in linear algebra domains, and several GPU-based SpTRSV algorithms have been developed. Synchronization-free SpTRSVs, due to their short preprocessing time and high performance, are currently the most popular SpTRSV algorithms. However, we observe that the performance of those SpTRSV algorithms on different matrices can vary greatly by 845 times. Our further studies show that when the average number of components per level is high and the average number of nonzero elements per row is low, those SpTRSVs exhibit extremely low performance. The reason is that, they use a warp on the GPU to process a row in sparse matrices, and such warp-level designs have severe underutilization of the GPU. To solve this problem, we propose YuenyeungSpTRSV, a thread-level and wrap-level fusion synchronization-free SpTRSV algorithm, which handles the rows with a large number of nonzero elements at warp-level while the rows with a low number of nonzero elements at thread-level. Particularly, YuenyeungSpTRSV has three novel features. First, unlike the previous studies, YuenyeungSpTRSV does not need long preprocessing time to calculate levels. Second, YuenyeungSpTRSV exhibits high performance on matrices that previous SpTRSVs cannot handle efficiently. Third, YuenyeungSpTRSV's optimization does not rely on the specific sparse matrix storage format. Instead, it can achieve very good performance on the most popular sparse matrix storage, compressed sparse row (CSR) format, and thus users do not need to conduct format conversion. We evaluate YuenyeungSpTRSV with 245 matrices from the Florida Sparse Matrix Collection on four GPU platforms, and experiments show that our YuenyeungSpTRSV exhibits 7.14 GFLOPS/s, which is 5.98x speedup over the state-of-the-art synchronization-free SpTRSV algorithm, and 4.83x speedup over the SpTRSV in cuSPARSE.},
+  file       = {/Users/yanyucheng/Zotero/storage/8KTW8PYS/Zhang et al. - 2021 - YuenyeungSpTRSV A Thread-Level and Warp-Level Fus.pdf},
+  journal    = {IEEE Transactions on Parallel and Distributed Systems},
+  language   = {en},
+  number     = {9}
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////////
 @misc{NWPUThesisLaTeXTemplate,
-    title={{{\LaTeX}}-Template-For-NPU-Thesis},
-    author={Shangkun Shen and Zhihe Wang and Jiduo Zhang and Weijia Zhang},
-    year={2016},
-    month={05}
+  title  = {{{\LaTeX}}-Template-For-NPU-Thesis},
+  author = {Shangkun Shen and Zhihe Wang and Jiduo Zhang and Weijia Zhang},
+  year   = {2016},
+  month  = {05}
 }
 
 @book{knuth1986the,
-    title={The {{\TeX}}book},
-    author={Knuth, Donald E},
-    publisher={Addison-Wesley},
-    year={1986}
+  title     = {The {{\TeX}}book},
+  author    = {Knuth, Donald E},
+  publisher = {Addison-Wesley},
+  year      = {1986}
 }
 
 @book{lamport1989latex:,
-    title={{{\LaTeX}}: a document preparation system},
-    author={Lamport, Leslie},
-    publisher={Addison-Wesley Professional},
-    year={1989}
+  title     = {{{\LaTeX}}: a document preparation system},
+  author    = {Lamport, Leslie},
+  publisher = {Addison-Wesley Professional},
+  year      = {1989}
 }
 
 
 @article{szegedy2015going,
-    title={Going deeper with convolutions},
-    author={Szegedy, Christian and Liu, Wei and Jia, Yangqing and Sermanet, Pierre and Reed, Scott E and Anguelov, Dragomir and Erhan, Dumitru and Vanhoucke, Vincent and Rabinovich, Andrew},
-    journal={computer vision and pattern recognition},
-    pages={1--9},
-    year={2015}
+  title   = {Going deeper with convolutions},
+  author  = {Szegedy, Christian and Liu, Wei and Jia, Yangqing and Sermanet, Pierre and Reed, Scott E and Anguelov, Dragomir and Erhan, Dumitru and Vanhoucke, Vincent and Rabinovich, Andrew},
+  journal = {computer vision and pattern recognition},
+  pages   = {1--9},
+  year    = {2015}
 }
 
 @misc{MathSymbolsinLaTeXbypolossk,
-    title={Math-Symbols-in-{{\LaTeX}}},
-    author={Shangkun Shen},
-    year={2017},
-    month={10}
+  title  = {Math-Symbols-in-{{\LaTeX}}},
+  author = {Shangkun Shen},
+  year   = {2017},
+  month  = {10}
 }
