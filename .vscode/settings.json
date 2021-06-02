@@ -71,6 +71,8 @@
         "*.nav",
         "*.snm"
     ],
-    "editor.wordWrap": "on"
+    "editor.wordWrap": "on",
+    "latex-workshop.latex.autoBuild.run": "never",
+    "latex-workshop.latex.autoBuild.interval": 10
     
 }

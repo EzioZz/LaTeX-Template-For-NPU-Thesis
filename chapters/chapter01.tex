@@ -19,20 +19,20 @@ SpTRSV算法主要是从方程组$Lx=b$中求解未知数向量$ x $，其中$ L
     \subfigure[下三角矩阵]{
     \begin{minipage}[t]{0.25\linewidth}
     \centering
-    \includegraphics[width=1.5in]{Sparse_Matrix.png}
+    \includegraphics[height=1.3in]{Sparse_Matrix.png}
     \end{minipage}%
     }%
     \subfigure[任务依赖图]{
     \begin{minipage}[t]{0.25\linewidth}
     \centering
-    \includegraphics[width=1.5in]{DAG.png}
+    \includegraphics[height=1.3in]{DAG.png}
     \label{TDG}
     \end{minipage}%
     }%
     \subfigure[level-sets]{
     \begin{minipage}[t]{0.25\linewidth}
     \centering
-    \includegraphics[width=1.5in]{level-sets.png}
+    \includegraphics[height=1.3in]{level-sets.png}
     \end{minipage}
     \label{level-sets}
     }%
@@ -60,7 +60,7 @@ Jongsoo Park\cite{park2014sparsifying}在基于level-sets算法进行了一些�
 
 同时作者也做了负载均衡的优化，根据每行非零元个数的多少来进行任务的合并，组合成一定数量的super-task，使得每个super-task有相似的计算量。
 
-刘伟峰\cite{liuSyncFree2016,liuFastSynchronizationfreeAlgorithms2017}从减少算法预处理和减少算法同步所需时间的角度出发，提出了无需同步的（synchronization-free）SpTRSV算法。 基于传统level-set的方法，随着矩阵大小的增加，其在预处理阶段所需的消耗会剧烈增加，且同步所需的时间在计算总时间中的占比也会大量增加。他的算法在 预处理阶段只计算了每个 entry 的 in-degree 数组（用来记录每一个节点需要有多少入度），而不是构造一个依赖图，大幅减少了预处理时间，而且该预处理方法能够轻易地使用多核来进行并行加速。对于每个 warp 使用自旋锁，不断判断前置依赖 是否都被满足来决定该结点是否开始计算。当一行计算完成后，使用原子操作来“通知”后继 节点，减少了同步的时间，该算法在 GPU TitanX 上比 Nvidia 提供的算法快 2-3 倍。
+刘伟峰\cite{liuSyncFree2016,liuFastSynchronizationfreeAlgorithms2017}从减少算法预处理和减少算法同步所需时间的角度出发，提出了无需同步的（synchronization-free）SpTRSV算法。 基于传统level-set的方法，随着矩阵大小的增加，其在预处理阶段所需的消耗会剧烈增加，且同步所需的时间在计算总时间中的占比也会大量增加。他的算法在 预处理阶段只计算了每个任务的 in-degree 数组（用来记录每一个节点需要有多少入度），而不是构造一个依赖图，大幅减少了预处理时间，而且该预处理方法能够轻易地使用多核来进行并行加速。对于每个 warp 使用自旋锁，不断判断前置依赖 是否都被满足来决定该结点是否开始计算。当一行计算完成后，使用原子操作来“通知”后继节点，减少了同步的时间。同时作者结合GPU的体系结构，针对GPU的片上内存和全局内存进行了优化，该算法在 GPU TitanX 上比 Nvidia 提供的算法快 2-3 倍。
 
 \begin{figure}[htbp]
     \centering
