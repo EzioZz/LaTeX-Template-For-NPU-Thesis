@@ -58,3 +58,8 @@ Temporary Items
 *.gz
 *.fdb_latexmk
 *.fls
+example 4.synctex(busy)
+.gitignore
+example 5.synctex(busy)
+example 6.synctex(busy)
+chapters/__latexindent_temp.tex
