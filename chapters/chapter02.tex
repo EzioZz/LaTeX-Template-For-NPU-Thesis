@@ -176,11 +176,11 @@ J.Park在level-sets算法的基础上提出除了更高效的并行SpTRSV算法\
 \end{enumerate}
 例如nlpkkt160只有两个level，同步所占用的时间要远小于计算所需的时间。作为对比矩阵FEM/ship 003，虽然矩阵的规模小于lpkkt160，但是由于其level相对较多，导致了同步所占用的时间也较多。
 
-刘伟锋从减少预处理和减少同步所需时间的角度出发，提出了名为sync-free的SpTRSV计算方法\cite{liuSyncFree2016}。该算法能够在GPU上能够取得较好的效果。与传统基于level-sets的算法不同的是，sync-free的SpTRSV算法只在预处理阶段计算每个任务的入度，该入度表示当前任务有多少的前置依赖。作者使用一个warp，32个线程来处理每个任务。任务之间通过使用共享变量以及原子操作的方式，来决定任务之间的顺序。算法的伪代码见\ref{sync-free alogrithm}
+刘伟锋从减少预处理和减少同步所需时间的角度出发，提出了名为sync-free的SpTRSV计算方法\cite{liuSyncFree2016}。该算法能够在GPU上能够取得较好的效果。与传统基于level-sets的算法不同的是，sync-free的SpTRSV算法只在预处理阶段计算每个任务的入度，该入度表示当前任务有多少的前置依赖。作者使用一个warp，32个线程来处理每个任务。任务之间通过使用共享变量以及原子操作的方式，来决定任务之间的顺序。算法的伪代码见\ref{sync-free alogrithm preprocess, sync-free alogrithm solve}
 
 \begin{algorithm}[htbp]
-    \caption{sync-free SpTRSV}
-    \label{sync-free alogrithm}
+    \caption{sync-free SpTRSV预处理阶段算法}
+    \label{sync-free alogrithm preprocess}
     \SetKw{atomic-add}{atomic-add} 
     \SetKw{atomic-sub}{atomic-sub} 
     \SetKw{Parallel}{Parallel} 
@@ -192,6 +192,15 @@ J.Park在level-sets算法的基础上提出除了更高效的并行SpTRSV算法\
             atomic-add(\&d\_in\_degree[row\_idx[i]], 1) \; 
         }
     }
+\end{algorithm}
+
+\begin{algorithm}[htbp]
+    \caption{sync-free SpTRSV计算阶段的算法}
+    \label{sync-free alogrithm solve}
+    \SetKw{atomic-add}{atomic-add} 
+    \SetKw{atomic-sub}{atomic-sub} 
+    \SetKw{Parallel}{Parallel} 
+    \SetKwProg{Fn}{Function}{ is}{end}
 
     \Fn{Solve()}{
         \Parallel \For(using one warp for one entry){int i = 0; i < n; i++}{
@@ -319,7 +328,7 @@ ARM Neon除了提供汇编指令之外，还提供了C风格的编程接口Neon 
     \label{SMP架构示意图}
 \end{figure}
 
-由于在NUMA架构下，多个核心组成一个节点（Node），系统中可以存在着多个节点，每个节点上有一个内存控制器，管理控制一片内存。内存在物理上是分布式的，通过片间网络互联。这就导致了，每个线程访问内存的性能取决于软件相对于内存的位置，对软件设计者提出了挑战。
+由于在NUMA架构下，多个核心组成一个节点（Node），系统中可以存在着多个节点，每个节点上有一个内存控制器，管理控制一片内存。内存在物理上是分布式的，通过片间网络互联。这就导致了，每个线程访问内存的延迟与带宽取决于软件相对于内存的位置，对软件设计者提出了挑战。
 
 \begin{figure}[htbp]
     \centering
@@ -330,7 +339,7 @@ ARM Neon除了提供汇编指令之外，还提供了C风格的编程接口Neon 
 
 linux从内核版本2.5开始就支持NUMA架构\cite{numalinux}，用户可以通过numactl命令来手动分配程序的NUMA访问策略，例如我们可以将进程或者内存固定在指定的节点上。系统默认的NUMA策略是nodelocal，及总是在线程执行的地方分配内存。用户可以设置为numactl --interleave，这时操作系统将会在各个节点之间，使用round-robin算法均衡分配内存。同时系统也为用户提供了libnuma这一编程接口\cite{libnuma}，方便用户在程序语言层面，对数据进行操作，例如手动指定数据所在的节点。
 
-值得一提的是，默认NUMA策略下，操作系统使用的是“Fist touch”的NUMA分配原则，即用户使用malloc时操作系统会分配逻辑内存页，当初次访问这个数据时（例如初始化操作），操作系统发现该逻辑页面还没有被分配物理页面，于是就进行分配物理页面的操作，此时操作系统的根据调用线程的NUMA分配策略来进行物理页面的分配。这时，在默认NUMA分配政策下，操作系统会将数据分配到，离该线程最接近的NUMA节点。
+值得一提的是，默认NUMA策略下，操作系统使用的是“Fist touch”的NUMA分配原则，即用户使用malloc时操作系统会分配逻辑内存页，当初次访问这个数据时（例如初始化操作），操作系统发现该逻辑页面还没有被分配物理页面，于是就进行分配物理页面的操作，此时操作系统的根据调用线程的NUMA分配策略来进行物理页面的分配。这时，在默认NUMA分配政策下，操作系统会将数据分配到，离该线程最接近的NUMA节点。当然也可以开启numactl --interleave，来替换覆盖“First touch”的原则。
 
 常用的编程工具OpenMP也提供了NUMA编程的接口。主要是通过两个环境变量，OMP\_PLACES决定了线程能够创建的位置，可以指定具体的节点，也可指定具体的核心。OMP\_PROC\_BIND可以设置线程的分配方式。
 
@@ -380,9 +389,11 @@ gcc也充分利用了这一特性，提供了基于LSE原子指令的优化。
 
 \section{CPU松弛技术}
 
-在自旋等待中，常常会使用到CPU\_relax()进行优化。也就是在自旋的循环体重插入nop操作，让cpu进行空转。在核并行的情况下，这种操作能够减轻为了维护内存序带来的性能损失。
+在自旋等待中，常常会使用到CPU\_relax()进行优化。也就是在自旋的循环体重插入nop操作，让cpu进行空转。在核并行的情况下，这种操作能够减轻为了维护内存序带来的性能损失。intel处理器从Pentium4开始引入了PAUSE汇编指令。在ARM架构下也能通过汇编实现类似的操作。memory指令是内存屏障的操作，保持CPU空转，在运行时防止对内存的操作乱序执行，并且会将所有缓存在寄存器中的所有变量写回内存当中，然后重新从内存中读取。
+
 
 \begin{lstlisting}[language=c++]
+    \label{test}
     inline void PauseCPU() { 
         __asm__ __volatile__("yield" : : : "memory"); 
     }
@@ -390,8 +401,7 @@ gcc也充分利用了这一特性，提供了基于LSE原子指令的优化。
 
 \section{本章小结}
 
-本章介绍了SpTRSV算法的应用场景，即线性方程组的求解；然后介绍了稀疏矩阵常见的两种几种压缩方式COO、CSC、CSR；之后又详细介绍了目前性能不错的SpTRSV算法及其性能分析。最后则介绍了，基于多核CPU体系结构进行优化的一些手段，以及这些优化技术的原理。从Pentium 4开始引入了PAUSE汇编指令。在ARM架构下也能通过汇编实现类似的操作。在鲲鹏920上，我们可以使用如下操作。
-
+本章介绍了SpTRSV算法的应用场景，在线性方程求解算法中，LU分解和预优化的共轭梯度下降法都需要用到稀疏下三角矩阵求解；然后介绍了稀疏矩阵常见的两种几种压缩方式COO、CSC、CSR；之后又详细介绍了目前现有的性能不错的SpTRSV算法及其性能分析。最后则介绍了，基于多核CPU体系结构进行优化的一些手段，以及这些优化技术的原理，例如缓存优化技术，伪共享的消除机制，基于ARM Neon的SIMD指令，已经针对NUMA架构的优化。最后还提到了使用CPU松弛技术来提高多核并发情况下自旋等待的性能。
 
 
 

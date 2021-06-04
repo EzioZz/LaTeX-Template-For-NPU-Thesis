@@ -12,7 +12,7 @@
 \usepackage{subfigure}
 \usepackage{multirow}
 \usepackage{url}
-\usepackage[ruled,linesnumbered]{algorithm2e}
+\usepackage[ruled,linesnumbered,algochapter]{algorithm2e}
 
 % listset --- start
 \lstset{
@@ -40,9 +40,9 @@ frame=shadowbox
 % 仅用于测试
 \usepackage{blindtext}
 
-\title{\textsf{比如我举个例子}}
-\author{{\kai 谁知道呢}}
-\date{May 20, 20xx}
+\title{\textsf{基于华为鲲鹏920的SpTRSV算法优化}}
+\author{{\kai 严愉程}}
+\date{June 1, 2021}
 
 \begin{document}
 
@@ -53,16 +53,6 @@ frame=shadowbox
 % 封皮
 \frontmatter
 \input{settings/cover.tex}
-\clearpage
-\thispagestyle{empty}
-\phantom{s}
-\clearpage
-\includepdf{preface/tasklist.pdf} 
-\newpage
-\clearpage
-\thispagestyle{empty}
-\phantom{s}
-\clearpage
 
 \setcounter{page}{1}
 \renewcommand{\baselinestretch}{1.25}
@@ -81,13 +71,15 @@ frame=shadowbox
 
 \mainmatter
 
-\renewcommand{\baselinestretch}{1.0}
+\renewcommand{\baselinestretch}{1.25}
 \sHalfXiaosi\fSong
 
 % 正文内容
 \input{chapters/chapter01.tex}
 \input{chapters/chapter02.tex}
 \input{chapters/chapter03.tex}
+\input{chapters/chapter04.tex}
+\input{chapters/chapter05.tex}
 
 % 参考文献设置
 \clearpage
