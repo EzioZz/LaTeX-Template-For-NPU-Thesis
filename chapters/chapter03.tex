@@ -57,7 +57,7 @@
 由于对数组left\_sum以及数组in[rid]会出现大量的并发访存，会出现伪共享的情况，应该通过padding的方式消除。这里选择使用gcc的编译属性\_\_attribute\_\_进行padding。
 
 \begin{lstlisting}[caption={消除伪共享}]
-    struct Node{
+struct Node{
     std::atomic<size_t> csrRowHisto_atomic {0};
     std::size_t idx = {0};
     VALUE_TYPE left_sum {0.0};
@@ -76,9 +76,10 @@ J.Park\cite{park2014sparsifying}通过合并超级任务的方式来进行负载
     \label{负载均衡示意图}
 \end{figure}
 
+在后续测试中发现，随着矩阵规模的扩大，负载均衡算法会遇到内存带宽的瓶颈，导致由负载均衡的消耗远大于使用负载均衡带来的性能优化。对于这个问题我提出了两种解决方案：一是利用NUMA架构的特性，提升内存带宽；而是在预处理阶段统计每个任务的计算任务负载情况的最大值和最小值。只对两者差距不是很大就不进行负载均衡。
 
 
-\section{使用SIMD指令进行优化}
+\section{使用SIMD指令}
 
 并行SpTRSV算法的第二个循环可以通过SIMD指令进行优化。由于ARM Neon只提供了128bit的向量寄存器，只能放下两个double和四个float，这里只对float类型的数据进行向量化计算的操作。算法流程为：首先用数据类型float32x\_t创建两个Neon寄存器变量vec\_xi、vec\_csaVal，该数据类型表示一个向量中有4个float32数据，分别表示由行号为i的未知数x组成的向量和稀疏矩阵一列上非零元组成的向量。将原来步长为1的循环，现在要修改为步长为4的循环。然后使用vld1q\_f32指令将稀疏矩阵中的4个非零元load进入vec\_csaVal寄存器当中，使用vld1q\_dup\_f32，将xi复制4份，load进vec\_xi寄存器中。之后使用vmulq\_f32，执行向量乘法的操作。最后使用vgetq\_lane\_f32(vec\_result)，将向量乘法的结果从寄存器中取出，并写会内存当中。
 
@@ -103,7 +104,7 @@ J.Park\cite{park2014sparsifying}通过合并超级任务的方式来进行负载
 
 具体实现方式为，通过编译器参数'-march=armv8-a+lse'来实现
 
-\section{使用NUMA架构的优化}
+\section{使用NUMA架构}
 
 NUMA架构的优点是扩展了系统的内存带宽，提升了系统的CPU核心数目，缓解了缓存一致性的冲突。但是却带来了远程内存访问，延迟过高等缺陷。软件设计人员需要充分考虑并利用这个特性，否则会带来性能的损失。
 
@@ -124,13 +125,15 @@ NUMA架构的优点是扩展了系统的内存带宽，提升了系统的CPU核�
 
 对于只读的数据类型我主要通过创建数据副本的形式，将只读数据分成四分，分配到四个NUMA节点上。主要是通过通过Linux操作系统提供的C语言编程接口\cite{libnuma}libnuma中的void *numa\_alloc\_onnode(size\_t size, int node)，接口参数int node表示指定结点的编号。线程首先通过sched\_getcpu()和numa\_node\_of\_cpu(cpuid)，得到自己所在结点的信息，根据这个信息来访问局部数据。然而对于频繁通过原子操作读写的数据，由于数据读写的随机性，没法使用numa架构进行很好的优化。
 
-总的来说，我主要尝试了三种NUMA策略。
+总的来说，我主要尝试了四种种NUMA策略。
 \begin{enumerate} \setlength{\itemsep}{0pt}
     \item 使用numactl --cpunodebind，将所有任务都固定在一个结点上。
+    \item 使用numactl --cpunodebind，将任务固定在两个距离相近的NUMA节点上。
     \item 使用numactl --interleave，将数据均匀分布在四个numa节点上。
     \item 创建只读数据副本，并将其分配到4个结点上。
 \end{enumerate}
 
+经过测试发现其实固定在一个节点上，性能是最好的。
 
 \section{本章总结}
 

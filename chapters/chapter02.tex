@@ -1,6 +1,6 @@
 \chapter{相关理论与技术介绍}
 
-\section{线性方程组求解}
+\section{稀疏线性方程组求解}
 
 经典的求解线性方程组的方法一般分为两类：直接法和迭代法。前者例如高斯消元法, LU分解等，后者的例子包括共轭梯度法等。直接法指在不考虑计算舍入误差的情况下，通过包括矩阵分解和三角方程组求解等有限步的操作求得方程组的精确解，因此又称精确法;迭代法指给定一个初始解向量，通过一定的计算构造一个向量列(一般通过逐次迭代得到一系列逼近精确值的近似解)，向量列的极限为方程组理论上的精确解。
 
@@ -145,16 +145,16 @@ J.Park在level-sets算法的基础上提出除了更高效的并行SpTRSV算法\
     \resizebox{\textwidth}{!}{%
     \begin{tabular}{|l|l|l|l|l|l|}
     \hline
-    \multirow{2}{*}{Matrix name} &
-      \multirow{2}{*}{Preprocessing cost (ms)} &
-      \multirow{2}{*}{SpTRSV cost (ms)} &
-      \multicolumn{2}{l|}{SpTRSV cost breakdown (ms)} &
-      \multirow{2}{*}{\#Level-sets} \\ \cline{4-5}
+    \multirow{2}{*}{矩阵名称} &
+      \multirow{2}{*}{预处理时间（ms）} &
+      \multirow{2}{*}{SpTRSV计算阶段花费时间} &
+      \multicolumn{2}{l|}{SpTRSV计算阶段时间分解} &
+      \multirow{2}{*}{level的个数} \\ \cline{4-5}
      &
        &
        &
-      Synchronization &
-      Compute &
+      同步时间消耗 &
+      计算时间消耗 &
        \\ \hline
     \begin{tabular}[c]{@{}l@{}}FEM/ship 003 \\ FEM/Cantilever \\ chipcool0 \\ nlpkkt160\end{tabular} &
       \begin{tabular}[c]{@{}l@{}}92.46\\ 47.89\\ 8.74\\ 484.67\end{tabular} &
