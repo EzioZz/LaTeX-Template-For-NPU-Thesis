@@ -117,7 +117,7 @@ J.Park在level-sets算法的基础上提出除了更高效的并行SpTRSV算法\
     }
 \end{algorithm}
 
-对比两种不同的调度算法，可以发现使用peer-to-peer的调度方式，能够使得计算资源能够得到更好的利用。因为当一个线程完成任务计算之后，基于屏障的同步方式会让该线程进入等待的状态。而基于peer-to-peer的同步方式则会让该线程继续进行下去。如图\ref{两种不同同步方式的对比示意图}，如果采用基于peer-to-peer的同步方式，线程2在完成任务2之后可以不用等在线程1完成任务1，可以接着运行下去。这在一定程度上也有利于负载均衡。
+对比两种不同的调度算法，可以发现使用peer-to-peer的调度方式，能够使得计算资源能够得到更好的利用。因为当一个线程完成任务计算之后，基于屏障的同步方式会让该线程进入等待的状态。而基于peer-to-peer的调度方式则会让该线程继续进行下去。如图\ref{两种不同同步方式的对比示意图}，如果采用基于peer-to-peer的同步方式，线程2在完成任务2之后可以不用等在线程1完成任务1，可以接着运行下去。这在一定程度上也有利于负载均衡。
 
 \begin{figure}[htbp]
     \caption{两种不同同步方式的对比示意图}
@@ -176,7 +176,7 @@ J.Park在level-sets算法的基础上提出除了更高效的并行SpTRSV算法\
 \end{enumerate}
 例如nlpkkt160只有两个level，同步所占用的时间要远小于计算所需的时间。作为对比矩阵FEM/ship 003，虽然矩阵的规模小于lpkkt160，但是由于其level相对较多，导致了同步所占用的时间也较多。
 
-刘伟锋从减少预处理和减少同步所需时间的角度出发，提出了名为sync-free的SpTRSV计算方法\cite{liuSyncFree2016}。该算法能够在GPU上能够取得较好的效果。与传统基于level-sets的算法不同的是，sync-free的SpTRSV算法只在预处理阶段计算每个任务的入度，该入度表示当前任务有多少的前置依赖。作者使用一个warp，32个线程来处理每个任务。任务之间通过使用共享变量以及原子操作的方式，来决定任务之间的顺序。算法的伪代码见\ref{sync-free alogrithm preprocess, sync-free alogrithm solve}
+刘伟锋从减少预处理和减少同步所需时间的角度出发，提出了名为sync-free的SpTRSV计算方法\cite{liuSyncFree2016}。该算法能够在GPU上能够取得较好的效果。与传统基于level-sets的算法不同的是，sync-free的SpTRSV算法只在预处理阶段计算每个任务的入度，该入度表示当前任务有多少的前置依赖。作者使用一个warp，32个线程来处理每个任务。任务之间通过使用共享变量以及原子操作的方式，来决定任务之间的顺序。算法的伪代码见\ref{sync-free alogrithm preprocess}ref{sync-free alogrithm solve}
 
 \begin{algorithm}[htbp]
     \caption{sync-free SpTRSV预处理阶段算法}
