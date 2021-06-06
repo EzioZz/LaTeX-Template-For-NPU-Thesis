@@ -120,8 +120,6 @@ J.Park在level-sets算法的基础上提出除了更高效的并行SpTRSV算法\
 对比两种不同的调度算法，可以发现使用peer-to-peer的调度方式，能够使得计算资源能够得到更好的利用。因为当一个线程完成任务计算之后，基于屏障的同步方式会让该线程进入等待的状态。而基于peer-to-peer的调度方式则会让该线程继续进行下去。如图\ref{两种不同同步方式的对比示意图}，如果采用基于peer-to-peer的同步方式，线程2在完成任务2之后可以不用等在线程1完成任务1，可以接着运行下去。这在一定程度上也有利于负载均衡。
 
 \begin{figure}[htbp]
-    \caption{两种不同同步方式的对比示意图}
-    \label{两种不同同步方式的对比示意图}
     \centering
     \subfigure[通过屏障同步]{
     \begin{minipage}[t]{0.30\linewidth}
@@ -137,11 +135,15 @@ J.Park在level-sets算法的基础上提出除了更高效的并行SpTRSV算法\
     \end{minipage}%
     }%
     \centering
+    \caption{两种不同同步方式的对比示意图}
+    \label{两种不同同步方式的对比示意图}
 \end{figure}
 
 \subsection{sync-free的SpTRSV算法}
 
 \begin{table}[]
+    \caption{基于level-sets算法\cite{park2014sparsifying}的任务耗时分解图}
+    \label{任务耗时分解图}
     \resizebox{\textwidth}{!}{%
     \begin{tabular}{|l|l|l|l|l|l|}
     \hline
@@ -164,8 +166,6 @@ J.Park在level-sets算法的基础上提出除了更高效的并行SpTRSV算法\
       \begin{tabular}[c]{@{}l@{}}4367\\ 2397\\ 534\\ 2\end{tabular} \\ \hline
     \end{tabular}%
     }
-    \caption{基于level-sets算法\cite{park2014sparsifying}的任务耗时分解图}
-    \label{任务耗时分解图}
 \end{table}
 
 
@@ -174,6 +174,7 @@ J.Park在level-sets算法的基础上提出除了更高效的并行SpTRSV算法\
 \item 预处理阶段所消耗的时间，要远大于计算阶段所消耗的时间，平均大概是8至10倍左右。预处理占总时间大约80\%。
 \item 同步所需的开销会导致的时间消耗，会随着矩阵level个数的增加而剧烈增加，当稀疏矩阵的level较多时，会导致同步的时间消耗远大于计算的时间消耗。这也可能是同level间负载不均衡所导致的。
 \end{enumerate}
+
 例如nlpkkt160只有两个level，同步所占用的时间要远小于计算所需的时间。作为对比矩阵FEM/ship 003，虽然矩阵的规模小于lpkkt160，但是由于其level相对较多，导致了同步所占用的时间也较多。
 
 刘伟锋从减少预处理和减少同步所需时间的角度出发，提出了名为sync-free的SpTRSV计算方法\cite{liuSyncFree2016}。该算法能够在GPU上能够取得较好的效果。与传统基于level-sets的算法不同的是，sync-free的SpTRSV算法只在预处理阶段计算每个任务的入度，该入度表示当前任务有多少的前置依赖。作者使用一个warp，32个线程来处理每个任务。任务之间通过使用共享变量以及原子操作的方式，来决定任务之间的顺序。算法的伪代码见\ref{sync-free alogrithm preprocess}ref{sync-free alogrithm solve}
@@ -227,17 +228,19 @@ J.Park在level-sets算法的基础上提出除了更高效的并行SpTRSV算法\
 
 \section{基于缓存的优化技术}
 
+\subsection{内存cache}
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{kp920_cache.png}
     \caption{kunpeng cache示意图}
-    \label{kunpeng cache示意图}
+    \label{Kunpeng Cache示意图}
 \end{figure}
 
 
-\subsection{内存cache}
+Cache在计算机系统中，是一种基于分层优化思想的一种优化手段。由于CPU的速度远大于内存的速度，出于成本的考虑，人们常用相对高速的Cache来弥补两者之间的差距，提升CPU的性能。
 
-Cache在计算机系统中，是一种基于分层优化思想的一种优化手段。由于CPU的速度远大于内存的速度，出于成本的考虑，人们常用相对告诉的Cache来弥补两者之间的差距，提升CPU的性能。在鲲鹏920芯片中，每个核心独占L1、L2两级缓存。离核心最近的是两个L1 Cache，分开缓存指令和数据，大小分别为64K。L2 Cache则要大得多，大小为512k。而第三级缓存则是鲲鹏920芯片上的所有核心共享，其中L3 Cacheline的长度为128个字节。
+图\ref{Kunpeng Cache示意图}为鲲鹏920处理器内存Cache的示意图\cite{kunpeng920pub}，在鲲鹏920芯片中，每个核心独占L1、L2两级缓存。离核心最近的是两个L1 Cache，分开缓存指令和数据，大小分别为64K。L2 Cache则要大得多，大小为512k。而第三级缓存则是鲲鹏920芯片上的所有核心共享，其中L3 Cacheline的长度为128个字节。
 
 \subsection{Cache Prefetch优化技术}
 Cache Prefetch也是一个针对Cache的优化设计。Cache比实际的内存快很多，所以如果我们可以提前加载部分内存到Cache中，就会在性能上有优势。比如一个乘法的时间，就算不考虑流水线，也不过3-12个周期，但是从DDR内存中读取数据可能会花费100个始终周期。所以最好还是在计算开始前，先让数据从内存加载到缓存当中，做到计算和缓存同步进行。
@@ -259,12 +262,13 @@ Cache Prefetch也是一个针对Cache的优化设计。Cache比实际的内存�
         }
   }
 \end{lstlisting}
+
 这里的\_\_builtin\_prefetch是gcc的内置函数，在不同的平台有不同的封装。在上面的算法中，我们进行某个向量单元的计算的时候，已经可以知道后面要计 算的内存单元是什么了，我们就可以提前把数据取出来。除了软件在做prefetch外，鲲鹏920处理器中也有硬件实现的prefetch单元，如\ref{hw_prefetch}。这就导致软件层面的prefetch可以没有很好的效果。
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{hw_prefetch.png}
-    \caption{鲲鹏920 cache prefetch的硬件结构示意图}
+    \caption{鲲鹏920 cache prefetch的硬件结构示意图\cite{kunpeng920pub}}
     \label{hw_prefetch}
 \end{figure}
 
@@ -401,7 +405,7 @@ gcc也充分利用了这一特性，提供了基于LSE原子指令的优化。
 
 \section{本章小结}
 
-本章介绍了SpTRSV算法的应用场景，在线性方程求解算法中，LU分解和预优化的共轭梯度下降法都需要用到稀疏下三角矩阵求解；然后介绍了稀疏矩阵常见的两种几种压缩方式COO、CSC、CSR；之后又详细介绍了目前现有的性能不错的SpTRSV算法及其性能分析。最后则介绍了，基于多核CPU体系结构进行优化的一些手段，以及这些优化技术的原理，例如缓存优化技术，伪共享的消除机制，基于ARM Neon的SIMD指令，已经针对NUMA架构的优化。最后还提到了使用CPU松弛技术来提高多核并发情况下自旋等待的性能。
+本章介绍了SpTRSV算法的应用场景，在线性方程求解算法中，LU分解和预优化的共轭梯度下降法都需要用到稀疏下三角矩阵求解；然后介绍了稀疏矩阵常见的两种几种压缩方式COO、CSC、CSR；之后又详细介绍了目前现有的性能不错的SpTRSV算法及其性能分析。最后介绍了基于多核CPU体系结构进行优化的一些手段，以及这些优化技术的原理。例如缓存优化技术，伪共享的消除机制，基于ARM Neon的SIMD指令，已经针对NUMA架构的优化。最后还提到了使用CPU松弛技术来提高多核并发情况下自旋等待的性能。
 
 
 

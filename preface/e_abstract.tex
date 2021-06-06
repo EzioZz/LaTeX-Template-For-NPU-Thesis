@@ -4,18 +4,17 @@
 \chapter[ABSTRACT(英文摘要)]{Abstract}
 \markboth{英~文~摘~要}{英~文~摘~要}
 
-The sparse triangular solve kernel, SpTRSV, is an important building block for a number of numerical linear algebra routines. It is commonly considered challenging to parallelize and scale even on a moderate number of cores. This challenge is due to the fact that triangular solver typically has frequent discrete memory access, load embalances between the tasks.
+The sparse triangular solve kernel(sparse triangular solver,SpTRSV), is an important building block for a number of numerical linear algebra routines. It is commonly considered challenging to parallelize and scale even on a moderate number of cores. This challenge is due to the fact that triangular solver typically has strong dependencies between tasks which rely on fine grained synchronization, frequent discrete memory access, and load embalances between tasks.
 
-Huawei Kunpeng920 is an ARMv8-based server CPU with up to 64 cores, supporting ARM NEON 128-bit SIMD instruction set.
+Huawei Kunpeng920 CPU is an ARMv8-based server CPU with up to 64 cores, supporting ARM NEON 128-bit SIMD instruction set and NUMA architecture with at most 4 nodes conected.
 
-\noindent
 The main work of this article includes:
 \vspace{-12pt}
 \begin{enumerate} \setlength{\itemsep}{0pt}
-    \item Design and implement an efficient sparse matrix triangular solve algorithm.
-    \item Optizing for Huawei Kunpeng920 multi-core processor and features of ARMv8 instruction set.
-    \item Utilizing ARM NEON 128bits SIMD instruction set to speed up the vector multiplication which is part of SpTRSV algorithm.
-    \item By taking NUMA feature into consideration and allocating matrix data properly, achieve better use of memory bandwidth.
+    \item Design and implement an efficient sparse matrix triangular solve algorithm. Different with triditional level-sets based SpTRSV routine, without constructing task denpendence graph(TDG), our algorithm has greatly reduced the time cost of preprocessing stage. Instead, we use atomic operation and spin-wait to maintain the sequential between tasks. And our alogrithm is roughly 2 times faster than serial routine and better performance than level-sets based algorithm in some cases.
+    \item Optimizing for Huawei Kunpeng920 and ARMv8 architecture.We have adopted several tricks related to the architecture of kunpeng920(e.g., eliminating false sharing, using ARMv8 new atomic instruction and cpu relax), achieved roughly 10\% further performance improvement.
+    \item Utilizing ARM NEON 128bits SIMD instruction set to speed up the vector multiplication. As for the data type of float32, one NEON multiplication instruction is equal to 4 triditional multiplication instructions.
+    \item Our alogrithm takes NUMA feature into consideration. For small matrix, we restrict all tasks in single node to avoid communication latency. And for large matrix, we allocate a copy of matrix data to every node, by utilizing larger bandwidth and more number of cores, our alogrithm running on multi-node has achieved 15\% performance boost than running on single node.
 \end{enumerate}
 \vspace{-12pt}
 
