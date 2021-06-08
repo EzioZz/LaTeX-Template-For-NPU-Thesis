@@ -148,13 +148,13 @@ J.Park在level-sets算法的基础上提出除了更高效的并行SpTRSV算法\
 \subsection{sync-free的SpTRSV并行算法}
 
 \begin{table}[]
-    \caption{基于level-sets算法\cite{park2014sparsifying}的任务耗时分解图}
+    \caption{基于level-sets算法\cite{park2014sparsifying}的任务耗时(ms)分解表}
     \label{任务耗时分解图}
     \resizebox{\textwidth}{!}{%
     \begin{tabular}{|l|l|l|l|l|l|}
     \hline
     \multirow{2}{*}{矩阵名称} &
-      \multirow{2}{*}{预处理时间（ms）} &
+      \multirow{2}{*}{预处理时间} &
       \multirow{2}{*}{SpTRSV计算阶段花费时间} &
       \multicolumn{2}{l|}{SpTRSV计算阶段时间分解} &
       \multirow{2}{*}{level的个数} \\ \cline{4-5}
@@ -403,7 +403,6 @@ gcc也充分利用了这一特性，提供了基于LSE原子指令的优化。
 
 
 \begin{lstlisting}[language=c++]
-    \label{test}
     inline void PauseCPU() { 
         __asm__ __volatile__("yield" : : : "memory"); 
     }
