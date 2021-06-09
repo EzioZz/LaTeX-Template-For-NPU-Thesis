@@ -11,7 +11,7 @@
     \begin{tabular}{|l|r|r|r|r|}
     \hline
     矩阵名称 & 行或列数量 & 非零元个数 & 最大level数 & 并行性 \\ \hline
-    nlpkkt160     & 8,345,600     & 22,9518,112   & 2   & 4,172,800   \\
+    nlpkkt160     & 8,345,600     & 229,518,112   & 2   & 4,172,800   \\
     road\_usa     & 23,947,347    & 57,708,624    & 77  & 311,004     \\
     road\_central & 14,081,816    & 33,866,826    & 59  & 238,674     \\
     wiki-Talk     & 2,394,385     & 5,021,410     & 522 & 4,586       \\
@@ -39,38 +39,38 @@
 
 ~\\
 
-然后，将本文提出的SpTRSV算法与intel MKL数学库中的SpTRSV算法进行了性能对比，结果如图\ref{SpTRSVMulti-paltform}所示，intel平台采用CPU双路志强E5-2695v3 14x2个核心，130GB内存，MKL版本为11.3。柱状图从左到右依次为：MKL数学库中串行算法的性能、并行算法的性能；在鲲鹏920处理器上，使用本文提出的串行算法的性能、并行算法的性能；纵轴以Gflops为单位来衡量算法的性能。Gflops计算方法为$(2 \times NNZL)  \div totoal\_time$。$totoal\_time = preprocess\_time + calculate\_time$。NNZL表示下三角矩阵非零元的个数，采用双精度浮点类型，所以前面乘2。6张图分别对应6个稀疏矩阵。
+% 然后，将本文提出的SpTRSV算法与intel MKL数学库中的SpTRSV算法进行了性能对比，结果如图\ref{SpTRSVMulti-paltform}所示，intel平台采用CPU双路志强E5-2695v3 14x2个核心，130GB内存，MKL版本为11.3。柱状图从左到右依次为：MKL数学库中串行算法的性能、并行算法的性能；在鲲鹏920处理器上，使用本文提出的串行算法的性能、并行算法的性能；纵轴以Gflops为单位来衡量算法的性能。Gflops计算方法为$(2 \times NNZL)  \div totoal\_time$。$totoal\_time = preprocess\_time + calculate\_time$。NNZL表示下三角矩阵非零元的个数，采用双精度浮点类型，所以前面乘2。6张图分别对应6个稀疏矩阵。
 
-可以看出，对于并行性较好的矩阵，如nlpkkt160和road\_central，并行算法取得了相比于串性算法3倍以上的加速比。而对于那些并行性较差的矩阵如wiki-Talk以及chipcool0，由于level数量较多，能够获得有限的加速比。
+% 可以看出，对于并行性较好的矩阵，如nlpkkt160和road\_central，并行算法取得了相比于串性算法3倍以上的加速比。而对于那些并行性较差的矩阵如wiki-Talk以及chipcool0，由于level数量较多，能够获得有限的加速比。
 
-\begin{figure}[htbp]
-    \centering
-    \subfigure{
-    \includegraphics[width=6.5cm]{result0.png}
-    }
-    \quad
-    \subfigure{
-    \includegraphics[width=6.5cm]{result1.png}
-    }
-    \quad
-    \subfigure{
-    \includegraphics[width=6.5cm]{result2.png}
-    }
-    \quad
-    \subfigure{
-    \includegraphics[width=6.5cm]{result3.png}
-    }
-    \quad
-    \subfigure{
-    \includegraphics[width=6.5cm]{result4.png}
-    }
-    \quad
-    \subfigure{
-    \includegraphics[width=6.5cm]{result5.png}
-    }
-    \caption{本文算法与intel MKL中算法的性能对比}
-    \label{SpTRSVMulti-paltform}
-\end{figure}
+% \begin{figure}[htbp]
+%     \centering
+%     \subfigure{
+%     \includegraphics[width=6.5cm]{result0.png}
+%     }
+%     \quad
+%     \subfigure{
+%     \includegraphics[width=6.5cm]{result1.png}
+%     }
+%     \quad
+%     \subfigure{
+%     \includegraphics[width=6.5cm]{result2.png}
+%     }
+%     \quad
+%     \subfigure{
+%     \includegraphics[width=6.5cm]{result3.png}
+%     }
+%     \quad
+%     \subfigure{
+%     \includegraphics[width=6.5cm]{result4.png}
+%     }
+%     \quad
+%     \subfigure{
+%     \includegraphics[width=6.5cm]{result5.png}
+%     }
+%     \caption{本文算法与intel MKL中算法的性能对比}
+%     \label{SpTRSVMulti-paltform}
+% \end{figure}
 
 \begin{table}[htbp]
     \scriptsize

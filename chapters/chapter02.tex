@@ -183,7 +183,7 @@ J.Park在level-sets算法的基础上提出除了更高效的并行SpTRSV算法\
 
 例如nlpkkt160只有两个level，同步所占用的时间要远小于计算所需的时间。作为对比矩阵FEM/ship 003，虽然矩阵的规模小于lpkkt160，但是由于其level相对较多，导致了同步所占用的时间也较多。
 
-刘伟锋从减少预处理和减少同步所需时间的角度出发，提出了名为sync-free的SpTRSV计算方法\cite{liuSyncFree2016}。该算法能够在GPU上能够取得较好的效果。与传统基于level-sets的算法不同的是，sync-free的SpTRSV算法只在预处理阶段计算每个任务的入度，该入度表示当前任务有多少的前置依赖。作者使用一个warp，32个线程来处理每个任务。任务之间通过使用共享变量以及原子操作的方式，来决定任务之间的顺序。算法的伪代码见\ref{sync-free alogrithm preprocess}ref{sync-free alogrithm solve}
+刘伟锋从减少预处理和减少同步所需时间的角度出发，提出了名为sync-free的SpTRSV计算方法\cite{liuSyncFree2016}。该算法能够在GPU上能够取得较好的效果。与传统基于level-sets的算法不同的是，sync-free的SpTRSV算法只在预处理阶段计算每个任务的入度，该入度表示当前任务有多少的前置依赖。作者使用一个warp，32个线程来处理每个任务。任务之间通过使用共享变量以及原子操作的方式，来决定任务之间的顺序。算法的伪代码见\ref{sync-free alogrithm preprocess}, \ref{sync-free alogrithm solve}
 
 \begin{algorithm}[htbp]
     \caption{sync-free SpTRSV预处理阶段算法}

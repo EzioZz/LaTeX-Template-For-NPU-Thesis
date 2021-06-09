@@ -33,7 +33,7 @@
     \SetKw{Parallel}{Parallel} 
     \SetKwProg{Fn}{Function}{ is}{end}
     \Fn{Solve()}{
-        \Parallel \For(using one warp for one entry){int i = 0; i < n; i++}{
+        \Parallel \For(using one thread for one task){int i = 0; i < n; i++}{
             int in\_degree\_this\_task = in\_degree[i] - 1 \;
             prefetch(\small{\&$val[col\_ptr[i]]$}) \;
             prefetch(\small{\&$b[i]$}) \;
@@ -42,7 +42,7 @@
             }
 
             \small{$x[i] \leftarrow (b[i]-left\_sum[i])/val[col ptr[i]]$}\;
-            \For(one thread for one nonzero){j in \small{$[col\_ptr[i]+1], col\_ptr[i+1]-1$}}{
+            \For{j in \small{$[col\_ptr[i]+1], col\_ptr[i+1]-1$}}{
                 atomic-add(\&left\_sum[rid], \small{$val[j] \times x[i]$}) \;
                 atomic-add(\&in[rid], 1) \;
             }
@@ -86,14 +86,16 @@ J.Park\cite{park2014sparsifying}通过合并超级任务的方式来进行负载
 在将结果写会内存的时候，由于一列上的非零元的行号都是离散的，因此对应产生结果的行号也不是连续的，这就导致本文们无法通过一个store命令直接将结果写如left\_sum中，而是需要分开进行独立的写操作。
 
 \begin{lstlisting}[caption={SIMD指令优化}]
+    float32x4_t vec_cscVal;
     float32x4_t vec_xi;
-    float32x4_t vec_csaVal;
+    vec_cscVal = vld1q_f32(&cscVal[j])
     vec_xi = vld1q_dup_f32(&xi);
+    vec_cscVal = vmulq_f32(vec_cscVal, vec_xi);
     for each nonzero in column (step_size = 4) {
-        result[0] = vgetq_lane_f32(vec_csaVal, 0);
-        result[1] = vgetq_lane_f32(vec_csaVal, 1);
-        result[2] = vgetq_lane_f32(vec_csaVal, 2);
-        result[3] = vgetq_lane_f32(vec_csaVal, 3);
+        result[0] = vgetq_lane_f32(vec_cscVal, 0);
+        result[1] = vgetq_lane_f32(vec_cscVal, 1);
+        result[2] = vgetq_lane_f32(vec_cscVal, 2);
+        result[3] = vgetq_lane_f32(vec_cscVal, 3);
         STORE result;
     }
 \end{lstlisting}
